@@ -74,8 +74,8 @@ public class SendBuffer extends Thread {
                     Packet dataPacket = PacketFactory.newDataPacket(UUID.randomUUID().toString(), this.node.getId(), dest, this.node.getId(), rte.route);
 
                     System.out.println("Sending data to " + dataPacket.dest + " Via " + dataPacket.route);
-                    
-                    this.node.send(dataPacket);
+
+                    this.node.getNOB().addLast(dataPacket);
                 }
             }
         } finally {

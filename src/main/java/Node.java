@@ -20,6 +20,8 @@ public class Node {
     private OutboundRequestBuffer orb;
     private SendBuffer sb;
     private RoutingRequestLog rreql;
+    private NetworkInboundBuffer nib;
+    private NetworkOutboundBuffer nob;
 
     public Node(int x, int y) {
         this.x = x;
@@ -29,6 +31,12 @@ public class Node {
         this.orb = new OutboundRequestBuffer();
         this.sb = new SendBuffer(this);
         this.rreql = new RoutingRequestLog();
+
+        this.nib = new NetworkInboundBuffer(this);
+        this.nob = new NetworkOutboundBuffer(this);
+
+        this.nib.start(); //start inbound buffer
+        this.nob.start(); //start outbound buffer
 
         this.orb.start(); //start timeout check
     }
@@ -48,7 +56,7 @@ public class Node {
 
                 System.out.println("I " + this.id + " will use my cached route for this " + dest.id);
 
-                this.send(p);
+                this.getNOB().addLast(p);;
             } catch(Exception e) {
                 e.printStackTrace();
             }
@@ -58,10 +66,10 @@ public class Node {
 
             this.orb.put(p); //put entry in orb - wait for rrep to arrive
             this.sb.put(p.dest); //also put entry in in sb - wait or route discovery to finish
-            this.send(p);
+            this.getNOB().addLast(p);
         }
     }
-
+/*
     public void send(Packet p) {
         //discover neighbours and send packet via flooding
         ArrayList<Node> neighbours = Config.field.discover(this);
@@ -71,7 +79,7 @@ public class Node {
             neighbours.get(i).receive(p);
         }
     }
-
+*/
     public void addRoutingTableEntryFromPacket(Packet p) {
         //construct routing table with information derived from request
         ArrayList<RoutingTable.RoutingTableEntry> rtes = p.extractRoutingTableEntries(this.id);
@@ -142,6 +150,22 @@ public class Node {
     
     public RoutingRequestLog getRREQL() {
         return this.rreql;
+    }
+
+    public NetworkInboundBuffer getNIB() {
+        return nib;
+    }
+
+    public void setNIB(NetworkInboundBuffer nib) {
+        this.nib = nib;
+    }
+
+    public NetworkOutboundBuffer getNOB() {
+        return nob;
+    }
+
+    public void setNOB(NetworkOutboundBuffer nob) {
+        this.nob = nob;
     }
 
     public boolean isInReach(Node other) {

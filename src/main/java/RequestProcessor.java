@@ -90,7 +90,7 @@ public class RequestProcessor extends Thread {
                     //Construct Routing Table Entry
                     this.node.addRoutingTableEntryFromPacket(this.packet);
 
-                    this.node.send(p);
+                    this.node.getNOB().addLast(p);
                 }
             } catch (Exception e) {
             } //do nothing maybe entry expired or I already broadcastet
@@ -111,15 +111,15 @@ public class RequestProcessor extends Thread {
 
             this.node.addRoutingTableEntryFromPacket(p);
 
-            this.node.send(p);
+            this.node.getNOB().addLast(p);
         } //only forward packet if current node has not forwarded in the past
         else if (!this.packet.route.contains(this.node.getId()) && !this.node.getRREQL().contains(this.packet.id)) {
             //just forward the packet as it as and put packet in orb to wait for ack
             Packet p = PacketFactory.newRREQPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), newPath);
             this.node.getORB().put(p);
             this.node.getRREQL().add(this.packet.id);
-            
-            this.node.send(p);
+
+            this.node.getNOB().addLast(p);
         }
     }
 
@@ -139,7 +139,7 @@ public class RequestProcessor extends Thread {
 
                     Packet p = PacketFactory.newDataPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), this.packet.route);
 
-                    this.node.send(p);
+                    this.node.getNOB().addLast(p);
                 }
             }
         } catch (Exception e) {
