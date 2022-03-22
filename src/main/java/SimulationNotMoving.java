@@ -14,6 +14,9 @@ public class SimulationNotMoving {
 
     //DO NOT EDIT CUSTOMIZE VIA Config.java
     public static void main(String[] args) {
+
+
+
         Field f = new Field(Config.X_SIZE, Config.Y_SIZE, Config.NUM_OF_NODES);
         Config.field = f;
         try {

@@ -144,27 +144,10 @@ public class Node {
         return this.rreql;
     }
 
-    //utility 
     public boolean isInReach(Node other) {
-        ArrayList<int[]> possible = new ArrayList();
-
-        for (int i = -Config.NODE_REACH; i <= Config.NODE_REACH; i++) {
-            for (int j = -Config.NODE_REACH; j <= Config.NODE_REACH; j++) {
-                if ((Math.abs(i) + Math.abs(j)) <= Config.NODE_REACH) {
-                    int x = this.x - i;
-                    int y = this.y - j;
-
-                    possible.add(new int[]{x, y});
-                }
-            }
-        }
-
-        for (int i = 0; i < possible.size(); i++) {
-            if (possible.get(i)[0] == other.getX() && possible.get(i)[1] == other.getY()) {
-                return true;
-            }
-        }
-
-        return false;
+        int xDistance = Math.abs(this.getX() - other.getX());
+        int yDistance = Math.abs(this.getY() - other.getY());
+        double distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+        return distance <= Config.NODE_REACH;
     }
 }
