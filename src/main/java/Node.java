@@ -41,10 +41,6 @@ public class Node {
         this.orb.start(); //start timeout check
     }
 
-    public void receive(Packet p) {
-        RequestProcessor.process(this, p);
-    }
-
     public void sendHello(Node dest) {;
         //check routing table if route was already discovered
         if (this.rt.exists(dest.getId())) {
@@ -69,17 +65,7 @@ public class Node {
             this.getNOB().addLast(p);
         }
     }
-/*
-    public void send(Packet p) {
-        //discover neighbours and send packet via flooding
-        ArrayList<Node> neighbours = Config.field.discover(this);
 
-        //System.out.println(this.id + " discovered neighbours " + neighbours.size());
-        for (int i = 0; i < neighbours.size(); i++) {
-            neighbours.get(i).receive(p);
-        }
-    }
-*/
     public void addRoutingTableEntryFromPacket(Packet p) {
         //construct routing table with information derived from request
         ArrayList<RoutingTable.RoutingTableEntry> rtes = p.extractRoutingTableEntries(this.id);
