@@ -52,7 +52,7 @@ public class SendBuffer extends Thread {
                 long now = System.currentTimeMillis();
 
                 if (now > sbe.ttl) {
-                    //System.out.println(sbe.dest + " expired");
+                    //System.out.println("Node " + this.node.getId() + ": " + sbe.dest + " expired");
                     this.entries.remove(i);
                 }
             }

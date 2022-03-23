@@ -6,6 +6,7 @@
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -69,7 +70,7 @@ public class Node {
             Packet rreqP = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, this.id);
 
             this.orb.put(rreqP); //put entry in orb - wait for rrep to arrive
-            this.sb.put(rreqP.dest); //also put entry in in sb - wait for route discovery to finish
+            this.sb.put(rreqP.dest); //also put entry in sb - wait for route discovery to finish
             this.getNOB().addLast(rreqP);
         }
     }
@@ -115,9 +116,15 @@ public class Node {
             String[] destinations = this.rt.keys();
             //remove all entries, that have routes that use the brokenLink
             for (int i = 0; i < destinations.length; i++) {
-                if (this.rt.get(destinations[i]).route.contains(brokenLink)) {
-                    System.out.println("Node " + this.getId() + ": removed route to " + destinations[i] + "(" + this.rt.get(destinations[i]).route + ")");
+                if (Utils.routeContainsLink(this.rt.get(destinations[i]).route, brokenLink)) {
+                    System.out.println("Node " + this.getId() + ": removed route to " + destinations[i] + "(" + this.rt.get(destinations[i]).route + "), started new route discovery");
                     this.rt.remove(destinations[i]);
+                    //do the route discovery to find a new route
+                    Packet rreqP = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, destinations[i], this.id, this.id);
+
+                    this.orb.put(rreqP); //put entry in orb - wait for rrep to arrive
+                    this.getNOB().addLast(rreqP);
+
                 }
             }
         }  catch (Exceptions.RoutingEntryNotFoundException e) {
@@ -125,22 +132,42 @@ public class Node {
         }
     }
 
+
+
     //getter and setter methods
     public int getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public  void setX(int x) {
         this.x = x;
     }
 
-    public int getY() {
+    public  int getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public  void setY(int y) {
         this.y = y;
     }
+
+    /**
+     * moves the node to a new random position
+     */
+    public void move() {
+        int x;
+        int y;
+        do {
+            Random r = new Random();
+            x = r.nextInt((Config.X_SIZE + 1) - 0) + 0;
+            y = r.nextInt((Config.Y_SIZE + 1) - 0) + 0;
+        } while(Config.field.hasNodeAt(x,y));
+            this.setX(x);
+            this.setY(y);
+        System.out.println("moved node " + this.getId() + " to X:" + x + " ,Y: " + y);
+
+    }
+
 
     public String getId() {
         return this.id;

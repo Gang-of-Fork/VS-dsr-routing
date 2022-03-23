@@ -75,7 +75,7 @@ public class Field {
         return this.nodes.size();
     }
     
-    private Boolean hasNodeAt(int x, int y) {
+    public Boolean hasNodeAt(int x, int y) {
         for(int i=0; i<this.nodes.size(); i++) {
             if(this.nodes.get(i).getY() == y && this.nodes.get(i).getX() == x) {
                 return true;

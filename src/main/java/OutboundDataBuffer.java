@@ -31,7 +31,7 @@ public class OutboundDataBuffer extends Thread {
             long expiry = System.currentTimeMillis() + Config.OUTBOUND_DATA_TIMEOUT;
 
             OutboundDataBufferEntry odbe = new OutboundDataBufferEntry(p, expiry);
-            System.out.println("Add Data Packet " + p.id +  " to ODB");
+            //System.out.println("Add Data Packet " + p.id +  " to ODB");
             this.entries.add(odbe);
         } finally {
             notifyAll();
@@ -62,10 +62,14 @@ public class OutboundDataBuffer extends Thread {
                 long now = System.currentTimeMillis();
 
                 if (now > odbe.ttl) {
-                    System.out.println(odbe.packet.id + " expired, no ACK received, sending RERR");
+                    System.out.println("Node " + this.node.getId()+  ": " + odbe.packet.id + " expired, no ACK received");
 
                     //remove all broken routes from RT
                     this.node.removeBrokenTableEntries(this.node.getId() + Config.PATH_DELIMITER + odbe.packet.getNextNodeId());
+
+                    //try sending the packet again
+                    this.node.getSB().put(odbe.packet.dest);
+                    System.out.println("Node " + this.node.getId()+  ": " + "retrying sending DataPacket to " + odbe.packet.dest);
 
                     //only send RERR packet, if the original packet does not originate from current node, otherwise
                     //it would result in a loopback message

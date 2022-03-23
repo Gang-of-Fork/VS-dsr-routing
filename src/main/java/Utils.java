@@ -29,4 +29,15 @@ public class Utils {
         
         return reversedRoute;
     }
+
+    public static boolean routeContainsLink(String route, String link) {
+        String[] route_split = route.split(Config.PATH_DELIMITER);
+        String[] link_split = link.split(Config.PATH_DELIMITER);
+        for(int i = 0; i < route_split.length-1; i++) {
+            if((route_split[i].equals(link_split[0]) && route_split[i+1].equals(link_split[1])) ||(route_split[i].equals(link_split[1]) && route_split[i+1].equals(link_split[0])) ){
+                return true;
+            }
+        }
+        return false;
+    }
 }

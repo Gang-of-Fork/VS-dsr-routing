@@ -153,6 +153,7 @@ public class RequestProcessor extends Thread {
                 this.node.getNOB().addLast(p);
 
             }
+
         } catch (Exceptions.IncompatiblePacketTypeException | Exceptions.NoBrokenLinksException e) {
             //e.printStackTrace();
 
