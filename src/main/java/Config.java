@@ -17,7 +17,7 @@
 public class Config {
     public static final int X_SIZE = 20; //size of x axis of field
     public static final int Y_SIZE = 20; //size o y axis of field
-    public static final int NUM_OF_NODES = 8; //number of nodes
+    public static final int NUM_OF_NODES = 5; //number of nodes
     public static final int NODE_REACH = 10; // reach of nodes
     
     public static final long OUTBOUND_REQ_TIMEOUT = 20000;

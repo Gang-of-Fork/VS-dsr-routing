@@ -24,4 +24,8 @@ public class PacketFactory {
     public static Packet newDataPacket(String id, String source, String dest, String sender, String route) {
         return new Packet(Packet.PacketTypes.DATA, id, source, dest, sender, route);
     }
+
+    public static Packet newAckPacket(String id, String source, String dest, String sender, String route) {
+        return new Packet(Packet.PacketTypes.ACK, id, source, dest, sender, route);
+    }
 }

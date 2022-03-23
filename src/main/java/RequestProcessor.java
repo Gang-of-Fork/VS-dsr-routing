@@ -57,6 +57,21 @@ public class RequestProcessor extends Thread {
             case DATA:
                 this.data();
                 break;
+            case ACK:
+                this.ack();
+        }
+    }
+
+    public void ack() {
+        try {
+            String nextNodeId = this.packet.getNextNodeId();
+            if (this.node.getId().equals(nextNodeId)) {
+                //ACK has same packetID as the original DataPacket
+                System.out.println("Node " + this.node.getId() + ":received ACK for packet " + this.packet.id + " , removing it from ODB");
+                this.node.getODB().pop(this.packet.id);
+            }
+        } catch (Exceptions.NoMatchingBufferEntryException | Exceptions.IncompatiblePacketTypeException e) {
+            e.printStackTrace();
         }
     }
 
@@ -147,17 +162,20 @@ public class RequestProcessor extends Thread {
     public void data() {
         try {
             String nextNodeId = this.packet.getNextNodeId();
+            if (this.node.getId().equals(nextNodeId)) {
+                //send ACK to sender
+                Packet ack = PacketFactory.newAckPacket(this.packet.id, this.node.getId(), this.packet.sender, this.node.getId(), this.node.getId() + Config.PATH_DELIMITER + this.packet.sender);
+                this.node.getNOB().addLast(ack);
 
-            if (this.packet.isDestination(this.node) && this.node.getId().equals(nextNodeId)) {
-                System.out.println("\u001B[31m" + this.node.getId() + " ich habe erhalten von " + this.packet.source + ":" + this.packet.id + "\u001B[0m");
-            } else {
-                if (this.node.getId().equals(nextNodeId)) {
+                if (this.packet.isDestination(this.node)) {
+                    System.out.println("\u001B[31m" + this.node.getId() + " ich habe erhalten von " + this.packet.source + ":" + this.packet.id + "\u001B[0m");
+                } else {
                     System.out.println(this.node.getId() + " ich leite weiter");
-
                     Packet p = PacketFactory.newDataPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), this.packet.route);
 
                     this.node.getODB().put(p);
                     this.node.getNOB().addLast(p);
+
                 }
             }
         } catch (Exception e) {

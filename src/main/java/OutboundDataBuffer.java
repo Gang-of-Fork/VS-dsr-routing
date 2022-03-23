@@ -31,17 +31,17 @@ public class OutboundDataBuffer extends Thread {
             long expiry = System.currentTimeMillis() + Config.OUTBOUND_DATA_TIMEOUT;
 
             OutboundDataBufferEntry odbe = new OutboundDataBufferEntry(p, expiry);
-            //System.out.println("Add Data Packet " + p.id +  " to ODB");
+            System.out.println("Add Data Packet " + p.id +  " to ODB");
             this.entries.add(odbe);
         } finally {
             notifyAll();
         }
     }
 
-    public synchronized OutboundDataBufferEntry pop(String reqId) throws Exceptions.NoMatchingBufferEntryException {
+    public synchronized OutboundDataBufferEntry pop(String packetId) throws Exceptions.NoMatchingBufferEntryException {
         try {
             for (int i = 0; i < this.entries.size(); i++) {
-                if (this.entries.get(i).packet.id.equals(reqId)) {
+                if (this.entries.get(i).packet.id.equals(packetId)) {
                     OutboundDataBufferEntry odbe = this.entries.get(i);
                     this.entries.remove(i);
                     return odbe;

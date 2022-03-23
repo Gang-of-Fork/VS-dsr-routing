@@ -11,13 +11,15 @@ import java.util.Arrays;
  *
  * @author Fwy
  */
+
 public class Packet {
 
     static enum PacketTypes {
         RREP,
         RREQ,
         RERR,
-        DATA
+        DATA,
+        ACK
     }
 
     public PacketTypes type;
