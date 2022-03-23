@@ -21,6 +21,7 @@ public class Config {
     public static final int NODE_REACH = 10; // reach of nodes
     
     public static final long OUTBOUND_REQ_TIMEOUT = 20000;
+    public static final long OUTBOUND_DATA_TIMEOUT = 20000;
     public static final String PATH_DELIMITER = ";";
     
     //DO NOT EDIT - THIS VARIABLES ARE USED INTERNALLY

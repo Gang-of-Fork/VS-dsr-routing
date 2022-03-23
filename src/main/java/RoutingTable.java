@@ -5,6 +5,7 @@
  */
 
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  *
@@ -57,6 +58,10 @@ public class RoutingTable {
         } finally {
             notifyAll();
         }
+    }
+
+    public synchronized String[] keys() {
+        return this.entries.keySet().toArray(new String[0]);
     }
     
     public boolean exists(String dest) {

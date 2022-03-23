@@ -5,10 +5,10 @@
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 /**
- *
  * @author Fwy
  */
 public class Node {
@@ -23,12 +23,16 @@ public class Node {
     private NetworkInboundBuffer nib;
     private NetworkOutboundBuffer nob;
 
+
+    private OutboundDataBuffer odb;
+
     public Node(int x, int y) {
         this.x = x;
         this.y = y;
         this.id = String.valueOf(Utils.getNextNodeId());
         this.rt = new RoutingTable();
         this.orb = new OutboundRequestBuffer();
+        this.odb = new OutboundDataBuffer(this);
         this.sb = new SendBuffer(this);
         this.rreql = new RoutingRequestLog();
 
@@ -38,31 +42,35 @@ public class Node {
         this.nib.start(); //start inbound buffer
         this.nob.start(); //start outbound buffer
 
-        this.orb.start(); //start timeout check
+        this.orb.start(); //start timeout check - RREQ
+        this.odb.start(); //start timeout check - DATA
     }
 
-    public void sendHello(Node dest) {;
+    public void sendHello(Node dest) {
+        ;
         //check routing table if route was already discovered
         if (this.rt.exists(dest.getId())) {
             try {
                 RoutingTable.RoutingTableEntry rte = this.rt.get(dest.getId());
 
                 //route was found send data packet
-                Packet p = PacketFactory.newDataPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, rte.route);
+                Packet dataP = PacketFactory.newDataPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, rte.route);
 
                 System.out.println("I " + this.id + " will use my cached route for this " + dest.id);
 
-                this.getNOB().addLast(p);;
-            } catch(Exception e) {
+                this.getODB().put(dataP);
+                this.getNOB().addLast(dataP);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             //do the route discovery and put packets in sendbuffer
-            Packet p = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, this.id);
+            Packet rreqP = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, this.id);
 
-            this.orb.put(p); //put entry in orb - wait for rrep to arrive
-            this.sb.put(p.dest); //also put entry in in sb - wait or route discovery to finish
-            this.getNOB().addLast(p);
+            this.orb.put(rreqP); //put entry in orb - wait for rrep to arrive
+            this.sb.put(rreqP.dest); //also put entry in in sb - wait for route discovery to finish
+            this.getNOB().addLast(rreqP);
         }
     }
 
@@ -101,6 +109,22 @@ public class Node {
 
     }
 
+    public synchronized void removeBrokenTableEntries(String brokenLink) {
+        try {
+            //System.out.println("node " + this.getId() + " : removing broken link from routing table: "+ brokenLink);
+            String[] destinations = this.rt.keys();
+            //remove all entries, that have routes that use the brokenLink
+            for (int i = 0; i < destinations.length; i++) {
+                if (this.rt.get(destinations[i]).route.contains(brokenLink)) {
+                    System.out.println("Node " + this.getId() + ": removed route to " + destinations[i] + "(" + this.rt.get(destinations[i]).route + ")");
+                    this.rt.remove(destinations[i]);
+                }
+            }
+        }  catch (Exceptions.RoutingEntryNotFoundException e) {
+            //e.printStackTrace();
+        }
+    }
+
     //getter and setter methods
     public int getX() {
         return x;
@@ -133,7 +157,7 @@ public class Node {
     public SendBuffer getSB() {
         return this.sb;
     }
-    
+
     public RoutingRequestLog getRREQL() {
         return this.rreql;
     }
@@ -152,6 +176,14 @@ public class Node {
 
     public void setNOB(NetworkOutboundBuffer nob) {
         this.nob = nob;
+    }
+
+    public OutboundDataBuffer getODB() {
+        return odb;
+    }
+
+    public void setODB(OutboundDataBuffer odb) {
+        this.odb = odb;
     }
 
     public boolean isInReach(Node other) {

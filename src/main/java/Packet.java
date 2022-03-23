@@ -83,6 +83,21 @@ public class Packet {
         
     }
 
+    public String getBrokenLink() throws Exceptions.NoBrokenLinksException{
+
+        String[] splt_path = route.split(Config.PATH_DELIMITER);
+
+        for (int i = 0; i < splt_path.length; i++) {
+            if (splt_path[i].equals(this.source)) {
+                if (i == 0) {
+                    throw new Exceptions.NoBrokenLinksException("RERR must not originate from first station in the route");
+                }
+                return splt_path[i] + Config.PATH_DELIMITER + splt_path[i-1];
+            }
+        }
+        throw new Exceptions.NoBrokenLinksException("Source Station is not present in Route");
+    }
+
     public boolean isDestination(Node n) {
         return n.getId().equals(dest);
     }

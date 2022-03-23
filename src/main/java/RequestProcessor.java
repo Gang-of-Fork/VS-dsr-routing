@@ -5,16 +5,23 @@
  */
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 
 /**
- *
  * @author Fwy
  */
 public class RequestProcessor extends Thread {
 
     public static ArrayList<RequestProcessor> activeProcessors = new ArrayList();
     private static Semaphore processorsMutex = new Semaphore(1);
+    private Node node;
+    private Packet packet;
+
+    private RequestProcessor(Node n, Packet p) {
+        this.node = n;
+        this.packet = p;
+    }
 
     public static void process(Node n, Packet p) {
         RequestProcessor processor = new RequestProcessor(n, p);
@@ -34,14 +41,6 @@ public class RequestProcessor extends Thread {
         } finally {
             processorsMutex.release();
         }
-    }
-
-    private Node node;
-    private Packet packet;
-
-    private RequestProcessor(Node n, Packet p) {
-        this.node = n;
-        this.packet = p;
     }
 
     public void run() {
@@ -124,7 +123,25 @@ public class RequestProcessor extends Thread {
     }
 
     public void rerr() {
+        try {
 
+            //remove all broken routes from RT
+            String brokenLink = this.packet.getBrokenLink();
+            this.node.removeBrokenTableEntries(brokenLink);
+            //System.out.println(this.node.getId() + ": received RERR Packet from " + this.packet.sender);
+
+            String nextNodeId = this.packet.getNextNodeId();
+            //if current node is not the destination, but the message was meant for this destination pass it on
+            if (this.node.getId().equals(nextNodeId) && !this.packet.isDestination(this.node)) {
+                Packet p = PacketFactory.newRERRPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), this.packet.route);
+                System.out.println(this.node.getId() + " ich leite RERR weiter an " + p.getNextNodeId());
+                this.node.getNOB().addLast(p);
+
+            }
+        } catch (Exceptions.IncompatiblePacketTypeException | Exceptions.NoBrokenLinksException e) {
+            //e.printStackTrace();
+
+        }
     }
 
     public void data() {
@@ -132,13 +149,14 @@ public class RequestProcessor extends Thread {
             String nextNodeId = this.packet.getNextNodeId();
 
             if (this.packet.isDestination(this.node) && this.node.getId().equals(nextNodeId)) {
-                System.out.println("\u001B[31m" + this.node.getId() + " ich habe erhalten von " + this.packet.sender + ":" + this.packet.id + "\u001B[0m");
+                System.out.println("\u001B[31m" + this.node.getId() + " ich habe erhalten von " + this.packet.source + ":" + this.packet.id + "\u001B[0m");
             } else {
                 if (this.node.getId().equals(nextNodeId)) {
                     System.out.println(this.node.getId() + " ich leite weiter");
 
                     Packet p = PacketFactory.newDataPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), this.packet.route);
 
+                    this.node.getODB().put(p);
                     this.node.getNOB().addLast(p);
                 }
             }

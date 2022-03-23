@@ -10,6 +10,7 @@ import java.util.UUID;
 /**
  *
  * @author Fwy
+ * SendBuffer buffers destinations to send DataPackets that wait for routeDiscovery to finish before being sent
  */
 public class SendBuffer extends Thread {
 
@@ -73,8 +74,9 @@ public class SendBuffer extends Thread {
 
                     Packet dataPacket = PacketFactory.newDataPacket(UUID.randomUUID().toString(), this.node.getId(), dest, this.node.getId(), rte.route);
 
-                    System.out.println("Sending data to " + dataPacket.dest + " Via " + dataPacket.route);
+                    System.out.println("Node "+ this.node.getId() + ": Sending data to " + dataPacket.dest + " Via " + dataPacket.route);
 
+                    this.node.getODB().put(dataPacket);
                     this.node.getNOB().addLast(dataPacket);
                 }
             }

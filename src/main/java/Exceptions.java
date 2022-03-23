@@ -17,7 +17,7 @@ public class Exceptions {
     
     static class SerealizationException extends Exception {
         public SerealizationException(String msg) {
-            super("Error during Serealization:" + msg);
+            super("Error during Serialization:" + msg);
         }
     }
     
@@ -37,5 +37,9 @@ public class Exceptions {
         public NoMatchingBufferEntryException(String msg) {
             super(msg);
         }
+    }
+
+    static class NoBrokenLinksException extends Exception {
+        public NoBrokenLinksException(String msg) {super(msg);}
     }
 }
