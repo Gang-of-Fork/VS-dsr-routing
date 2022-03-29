@@ -17,11 +17,11 @@
 public class Config {
     public static final int X_SIZE = 25; //size of x axis of field
     public static final int Y_SIZE = 25; //size o y axis of field
-    public static final int NUM_OF_NODES = 10; //number of nodes
+    public static final int NUM_OF_NODES = 15; //number of nodes
     public static final int NODE_REACH = 10; // reach of nodes
     
-    public static final long OUTBOUND_REQ_TIMEOUT = 20000;
-    public static final long OUTBOUND_DATA_TIMEOUT = 10000;
+    public static final long OUTBOUND_REQ_TIMEOUT = 10000;
+    public static final long OUTBOUND_DATA_TIMEOUT = 5000;
     public static final String PATH_DELIMITER = ";";
     
     //DO NOT EDIT - THIS VARIABLES ARE USED INTERNALLY

@@ -57,7 +57,7 @@ public class Node {
                 //route was found send data packet
                 Packet dataP = PacketFactory.newDataPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, rte.route);
 
-                System.out.println("I " + this.id + " will use my cached route for this " + dest.id);
+                System.out.println("I " + this.id + " will use my cached route for this " + rte.route);
 
                 this.getODB().put(dataP);
                 this.getNOB().addLast(dataP);
@@ -110,21 +110,24 @@ public class Node {
 
     }
 
-    public synchronized void removeBrokenTableEntries(String brokenLink) {
+    public synchronized void removeBrokenTableEntries(String brokenLink, boolean isOriginalSender) {
         try {
             //System.out.println("node " + this.getId() + " : removing broken link from routing table: "+ brokenLink);
             String[] destinations = this.rt.keys();
             //remove all entries, that have routes that use the brokenLink
             for (int i = 0; i < destinations.length; i++) {
                 if (Utils.routeContainsLink(this.rt.get(destinations[i]).route, brokenLink)) {
-                    System.out.println("Node " + this.getId() + ": removed route to " + destinations[i] + "(" + this.rt.get(destinations[i]).route + "), started new route discovery");
+                    System.out.println("Node " + this.getId() + ": removed route to " + destinations[i] + "(" + this.rt.get(destinations[i]).route + ")");
                     this.rt.remove(destinations[i]);
-                    //do the route discovery to find a new route
-                    Packet rreqP = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, destinations[i], this.id, this.id);
+                    if(isOriginalSender) {
 
-                    this.orb.put(rreqP); //put entry in orb - wait for rrep to arrive
-                    this.getNOB().addLast(rreqP);
+                        //do the route discovery to find a new route
+                        System.out.println("Node " + this.getId() + ": starting new Route Discovery to " + destinations[i]);
+                        Packet rreqP = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, destinations[i], this.id, this.id);
 
+                        this.orb.put(rreqP); //put entry in orb - wait for rrep to arrive
+                        this.getNOB().addLast(rreqP);
+                    }
                 }
             }
         }  catch (Exceptions.RoutingEntryNotFoundException e) {

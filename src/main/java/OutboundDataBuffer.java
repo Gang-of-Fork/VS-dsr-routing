@@ -65,10 +65,11 @@ public class OutboundDataBuffer extends Thread {
                     System.out.println("Node " + this.node.getId()+  ": " + odbe.packet.id + " expired, no ACK received");
 
                     //remove all broken routes from RT
-                    this.node.removeBrokenTableEntries(this.node.getId() + Config.PATH_DELIMITER + odbe.packet.getNextNodeId());
 
-                    //try sending the packet again
-                    this.node.getSB().put(odbe.packet.dest);
+                    this.node.removeBrokenTableEntries(this.node.getId() + Config.PATH_DELIMITER + odbe.packet.getNextNodeId(), odbe.packet.source.equals(this.node.getId()));
+
+                    //retry sending the packet
+                    this.node.sendHello(Config.field.nodes.get(Integer.parseInt(odbe.packet.dest)));
                     System.out.println("Node " + this.node.getId()+  ": " + "retrying sending DataPacket to " + odbe.packet.dest);
 
                     //only send RERR packet, if the original packet does not originate from current node, otherwise

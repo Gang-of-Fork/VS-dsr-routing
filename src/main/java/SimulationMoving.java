@@ -21,28 +21,12 @@ public class SimulationMoving {
             n1 = f.nodes.get(0);
             n2 = f.nodes.get(1);
             n1.sendHello(n2);
-    /*
-            Thread.sleep(5000);
-            f.nodes.get(2).move();
-            n1.sendHello(n2);
-
-            Thread.sleep(5000);
-            f.nodes.get(3).move();
-            n1.sendHello(n2);
-
-            Thread.sleep(5000);
-            f.nodes.get(4).move();
-            n1.sendHello(n2);
-
-            Thread.sleep(5000);
-            f.nodes.get(0).move();
-            n1.sendHello(n2);
-
-     */
 
 
-            Thread.sleep(5000);
+            Thread.sleep(10000);
             f.nodes.get(1).move();
+            n1.sendHello(n2);
+            Thread.sleep(10000);
             n1.sendHello(n2);
 
         } catch(Exception e) {

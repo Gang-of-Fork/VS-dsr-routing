@@ -142,7 +142,7 @@ public class RequestProcessor extends Thread {
 
             //remove all broken routes from RT
             String brokenLink = this.packet.getBrokenLink();
-            this.node.removeBrokenTableEntries(brokenLink);
+            this.node.removeBrokenTableEntries(brokenLink, this.packet.isDestination(this.node));
             //System.out.println(this.node.getId() + ": received RERR Packet from " + this.packet.sender);
 
             String nextNodeId = this.packet.getNextNodeId();
