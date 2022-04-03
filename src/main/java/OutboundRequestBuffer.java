@@ -9,7 +9,7 @@ import java.util.ArrayList;
 /**
  *
  * @author Fwy
- * OutboundRequestBuffer buffers sent RREQ Packets waiting for RREPs
+ * OutboundRequestBuffer buffers sent RREQ Packets waiting for RRESs
  */
 public class OutboundRequestBuffer extends Thread {
 

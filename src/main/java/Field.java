@@ -13,7 +13,15 @@ import java.util.Random;
  */
 public class Field {
 
-    public ArrayList<Node> nodes;
+    public synchronized ArrayList<Node>  getNodes() {
+        return nodes;
+    }
+
+    public synchronized void setNodes(ArrayList<Node> nodes) {
+        this.nodes = nodes;
+    }
+
+    private ArrayList<Node> nodes;
     public int x_size;
     public int y_size;
     

@@ -26,6 +26,8 @@ public class NetworkOutboundBuffer extends Thread {
                     neighbours.get(i).getNIB().push(p);
                 }
 
+                VisualizationLogger.setPacketAndActionsAndSaveSnapshot(this.node, p);
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (NoSuchElementException e) {

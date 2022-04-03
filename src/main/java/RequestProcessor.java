@@ -48,8 +48,8 @@ public class RequestProcessor extends Thread {
             case RREQ:
                 this.rreq();
                 break;
-            case RREP:
-                this.rrep();
+            case RRES:
+                this.rres();
                 break;
             case RERR:
                 this.rerr();
@@ -75,8 +75,8 @@ public class RequestProcessor extends Thread {
         }
     }
 
-    public void rrep() {
-        //System.out.println(this.node.getId() + " Received RREP");
+    public void rres() {
+        //System.out.println(this.node.getId() + " Received RRES");
         String reqId = this.packet.id; //extract id from request
 
         if (this.packet.isDestination(this.node)) {
@@ -98,7 +98,7 @@ public class RequestProcessor extends Thread {
                 if (this.node.getId().equals(nextNodeId)) {
                     this.node.getORB().pop(reqId); //remove entry from orb - received response
 
-                    Packet p = PacketFactory.newRREPPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), this.packet.route);
+                    Packet p = PacketFactory.newRRESPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), this.packet.route);
 
                     //Routing Requests from other routers can also be used to discover own routing table
                     //Construct Routing Table Entry
@@ -115,13 +115,13 @@ public class RequestProcessor extends Thread {
         //System.out.println("Node " + this.node.getId() + " received rreq " + this.packet.id);
         String newPath = this.packet.route + Config.PATH_DELIMITER + this.node.getId();
 
-        //if node that received package is destination answer with rrep packet
+        //if node that received package is destination answer with rres packet
         if (this.packet.isDestination(this.node)) {
             //reverse route to get route back to sender
             String reversedRoute = Utils.reverseRoute(newPath);
 
             //reverse source and destination and send discovered route to sender
-            Packet p = PacketFactory.newRREPPacket(this.packet.id, this.packet.dest, this.packet.source, this.node.getId(), reversedRoute);
+            Packet p = PacketFactory.newRRESPacket(this.packet.id, this.packet.dest, this.packet.source, this.node.getId(), reversedRoute);
 
             this.node.addRoutingTableEntryFromPacket(p);
 
@@ -168,6 +168,7 @@ public class RequestProcessor extends Thread {
                 Packet ack = PacketFactory.newAckPacket(this.packet.id, this.node.getId(), this.packet.sender, this.node.getId(), this.node.getId() + Config.PATH_DELIMITER + this.packet.sender);
                 this.node.getNOB().addLast(ack);
 
+                //forward packet, if current node is not the destination
                 if (this.packet.isDestination(this.node)) {
                     System.out.println("\u001B[31m" + this.node.getId() + " ich habe erhalten von " + this.packet.source + ":" + this.packet.id + "\u001B[0m");
                 } else {

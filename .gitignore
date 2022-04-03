@@ -25,3 +25,6 @@ hs_err_pid*
 /.idea
 
 dsr-routing.iml
+
+/not_moving_sims
+/moving_sims

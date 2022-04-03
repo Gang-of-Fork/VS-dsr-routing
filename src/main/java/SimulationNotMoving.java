@@ -20,22 +20,21 @@ public class SimulationNotMoving {
         Field f = new Field(Config.X_SIZE, Config.Y_SIZE, Config.NUM_OF_NODES);
         Config.field = f;
         try {
+            VisualizationLogger.saveSnapshot("INIT");
+
             Node n1;
             Node n2;
 
-            n1 = f.nodes.get(2);
-            n2 = f.nodes.get(4);
-            n1.sendHello(n2);
-            Thread.sleep(2000);
 
-            n1 = f.nodes.get(1);
-            n2 = f.nodes.get(2);
-            n1.sendHello(n2);
-            Thread.sleep(2000);
 
-            n2 = f.nodes.get(4);
-            n2 = f.nodes.get(3);
+            n1 = f.getNodes().get(1);
+            n2 = f.getNodes().get(2);
             n1.sendHello(n2);
+
+            System.out.println("Waiting " + Config.LOGGER_WAIT_AFTER_LAST_PACKET + "ms before finalizing log...");
+            Thread.sleep(Config.LOGGER_WAIT_AFTER_LAST_PACKET);
+
+            VisualizationLogger.outputToFile("not_moving_sims");
 
 
         } catch(Exception e) {

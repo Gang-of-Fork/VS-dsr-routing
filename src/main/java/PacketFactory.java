@@ -13,8 +13,8 @@ public class PacketFactory {
         return new Packet(Packet.PacketTypes.RREQ, id, source, dest, sender, route);
     }
     
-    public static Packet newRREPPacket(String id, String source, String dest, String sender, String route) {
-        return new Packet(Packet.PacketTypes.RREP, id, source, dest, sender, route);
+    public static Packet newRRESPacket(String id, String source, String dest, String sender, String route) {
+        return new Packet(Packet.PacketTypes.RRES, id, source, dest, sender, route);
     }
     
     public static Packet newRERRPacket(String id, String source, String dest, String sender, String route) {

@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class Packet {
 
     static enum PacketTypes {
-        RREP,
+        RRES,
         RREQ,
         RERR,
         DATA,
