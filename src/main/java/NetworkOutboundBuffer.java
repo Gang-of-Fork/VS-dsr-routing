@@ -15,7 +15,7 @@ public class NetworkOutboundBuffer extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(250);
+                Thread.sleep(Config.NETWORK_BUFFER_FREQUENCY);
                 Packet p = this.pop();
 
                 //discover neighbours and send packet via broadcast

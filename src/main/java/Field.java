@@ -39,14 +39,17 @@ public class Field {
         Random r = new Random();
 
         for (int i = 0; i < numOfNodes; i++) {
+
             int x = r.nextInt((this.x_size + 1) - 0) + 0;
             int y = r.nextInt((this.y_size + 1) - 0) + 0;
             
             Node n = new Node(x, y);
             try {
                 this.addNode(n);
+
             } catch (Exceptions.NodeCollisionException e) {
                 i--;
+                Utils.decreaseNextNodeId();
             }
         }
     }

@@ -5,6 +5,8 @@
  */
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -36,6 +38,24 @@ public class RoutingTable {
 
     public RoutingTable() {
         this.entries = new HashMap();
+    }
+
+    //returns an array in JSON Format
+    public synchronized String toJSON() {
+        Iterator<RoutingTableEntry> rteIterator = entries.values().iterator();
+        String rt_json = "[";
+        while(rteIterator.hasNext()) {
+            RoutingTableEntry rte = rteIterator.next();
+            rt_json+="{\n";
+            rt_json+=("\"destination\":\"" + rte.dest + "\",\n");
+            rt_json+=("\"route\":\"" + rte.route + "\"\n");
+            rt_json+="}";
+            if(rteIterator.hasNext()) {
+                rt_json+=",\n";
+            }
+        }
+        rt_json += "]";
+        return rt_json;
     }
 
     public synchronized RoutingTableEntry get(String dest) throws Exceptions.RoutingEntryNotFoundException {

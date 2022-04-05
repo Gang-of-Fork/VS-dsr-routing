@@ -79,6 +79,7 @@ public class RequestProcessor extends Thread {
         //System.out.println(this.node.getId() + " Received RRES");
         String reqId = this.packet.id; //extract id from request
 
+
         if (this.packet.isDestination(this.node)) {
             try {
                 OutboundRequestBuffer.OutboundRequestBufferEntry orbe = this.node.getORB().pop(reqId);
@@ -116,7 +117,8 @@ public class RequestProcessor extends Thread {
         String newPath = this.packet.route + Config.PATH_DELIMITER + this.node.getId();
 
         //if node that received package is destination answer with rres packet
-        if (this.packet.isDestination(this.node)) {
+        //but not, if a rres packet has been sent for this rreq before
+        if (this.packet.isDestination(this.node) && !this.node.getRREQL().contains(this.packet.id)) {
             //reverse route to get route back to sender
             String reversedRoute = Utils.reverseRoute(newPath);
 
@@ -124,7 +126,7 @@ public class RequestProcessor extends Thread {
             Packet p = PacketFactory.newRRESPacket(this.packet.id, this.packet.dest, this.packet.source, this.node.getId(), reversedRoute);
 
             this.node.addRoutingTableEntryFromPacket(p);
-
+            this.node.getRREQL().add(this.packet.id);
             this.node.getNOB().addLast(p);
         } //only forward packet if current node has not forwarded in the past
         else if (!this.packet.route.contains(this.node.getId()) && !this.node.getRREQL().contains(this.packet.id)) {

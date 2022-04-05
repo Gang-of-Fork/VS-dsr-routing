@@ -94,7 +94,7 @@ public class OutboundDataBuffer extends Thread {
     public void run() {
         try {
             while (true) { //check every 100ms if entry is expired
-                Thread.sleep(300);
+                Thread.sleep(Config.TIMEOUT_BUFFER_FREQUENCY);
                 timeout();
             }
         } catch (Exception e) {

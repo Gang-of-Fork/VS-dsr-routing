@@ -15,15 +15,17 @@
  * - lifetime for rt entries
  */
 public class Config {
-    public static final int X_SIZE = 10; //size of x axis of field
-    public static final int Y_SIZE = 10; //size o y axis of field
-    public static final int NUM_OF_NODES = 5; //number of nodes
+    public static final int X_SIZE = 100; //size of x axis of field
+    public static final int Y_SIZE = 100; //size o y axis of field
+    public static final int NUM_OF_NODES = 200; //number of nodes
     public static final int NODE_REACH = 10; // reach of nodes
     
     public static final long OUTBOUND_REQ_TIMEOUT = 10000;
     public static final long OUTBOUND_DATA_TIMEOUT = 5000;
-    public static final long LOGGER_WAIT_AFTER_LAST_PACKET = 30000;
+    public static final long LOGGER_WAIT_AFTER_LAST_PACKET = 120000;
     public static final String PATH_DELIMITER = ";";
+    public static final long NETWORK_BUFFER_FREQUENCY = 100;
+    public static final long TIMEOUT_BUFFER_FREQUENCY = 250;
     
     //DO NOT EDIT - THIS VARIABLES ARE USED INTERNALLY
     public static Field field;

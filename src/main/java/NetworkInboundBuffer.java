@@ -15,7 +15,7 @@ public class NetworkInboundBuffer extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(250);
+                Thread.sleep(Config.NETWORK_BUFFER_FREQUENCY);
                 //throw NoSuchElementException when buffer is empty
                 Packet p = this.pop();
                 RequestProcessor.process(this.node, p);

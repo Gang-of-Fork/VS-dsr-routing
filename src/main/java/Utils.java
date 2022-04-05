@@ -20,6 +20,10 @@ public class Utils {
         nextNodeId += 1;
         return nextNodeId;
     }
+    //use when a node cannot be added due to collision
+    public static void decreaseNextNodeId() {
+        nextNodeId--;
+    }
     
     public static String reverseRoute(String route) {
         List<String> routeIds = Arrays.asList(route.split(Config.PATH_DELIMITER));

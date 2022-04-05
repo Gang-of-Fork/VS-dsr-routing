@@ -43,11 +43,26 @@ public class VisualizationLogger {
             nodes += "{";
             nodes += "\"x\": " + n.getX() + ",";
             nodes += "\"y\": " + n.getY() + ",";
-            nodes += "\"id\": " + n.getId();
+            nodes += "\"id\": " + n.getId() + ",";
+            nodes+= "\"routingTable\":";
+            nodes+= n.getRT().toJSON();
+            nodes+= ",\n";
+            nodes+= "\"inRange\":";
+            nodes+= "[";
+            ArrayList<Node> neighbours = Config.field.discover(n);
+            for(int j = 0; j < neighbours.size(); j++) {
+                nodes+= "\"" + neighbours.get(j).getId() + "\"";
+                if(!(j==neighbours.size()-1)) {
+                    nodes+= ",";
+                }
+
+            }
+            nodes+= "]";
+
             nodes += "}";
 
             if (i != (Config.field.getNodes().size() - 1)) {
-                nodes += ",";
+                nodes += ",\n";
             }
         }
         nodes += " ]";
@@ -96,7 +111,7 @@ public class VisualizationLogger {
         ArrayList<String> receiving_discarding_Ids = new ArrayList<String>();
         ArrayList<Node> neighbourNodes = Config.field.discover(sendingNode);
         //Only DATA and ACK are not overheard by other nodes
-        if (p.type.equals(Packet.PacketTypes.DATA) || p.type.equals(Packet.PacketTypes.ACK)) {
+        if (!(p.type.equals(Packet.PacketTypes.RERR) || p.type.equals(Packet.PacketTypes.RREQ))) {
             //add the next Node, that should receive the packet, to the receiving_processing array, if it is in range
             //add all other nodes in range into the receiving_discarding array
             for (Node node : neighbourNodes) {

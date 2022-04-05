@@ -27,14 +27,14 @@ public class SimulationMoving {
             n1.sendHello(n2);
 
 
-            Thread.sleep(10000);
+            Thread.sleep(60000);
             f.getNodes().get(1).move();
             n1.sendHello(n2);
 
             System.out.println("Waiting " + Config.LOGGER_WAIT_AFTER_LAST_PACKET + "ms before finalizing log...");
             Thread.sleep(Config.LOGGER_WAIT_AFTER_LAST_PACKET);
 
-            VisualizationLogger.outputToFile("movingSims");
+            VisualizationLogger.outputToFile("moving_sims");
 
         } catch(Exception e) {
             e.printStackTrace();
