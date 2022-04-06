@@ -112,31 +112,35 @@ public class Node {
     }
 
     public synchronized void removeBrokenTableEntries(String brokenLink, boolean isOriginalSender) {
-        try {
-            //System.out.println("node " + this.getId() + " : removing broken link from routing table: "+ brokenLink);
-            String[] destinations = this.rt.keys();
-            //remove all entries, that have routes that use the brokenLink
-            for (int i = 0; i < destinations.length; i++) {
-                if (Utils.routeContainsLink(this.rt.get(destinations[i]).route, brokenLink)) {
-                    System.out.println("Node " + this.getId() + ": removed route to " + destinations[i] + "(" + this.rt.get(destinations[i]).route + ")");
-                    this.rt.remove(destinations[i]);
-                    VisualizationLogger.setTableUpdateAndSaveSnapshot("remove", this.id, destinations[i], this.rt.get(destinations[i]).route);
-                    if(isOriginalSender) {
+        //System.out.println("node " + this.getId() + " : removing broken link from routing table: "+ brokenLink);
+        String[] destinations = this.rt.keys();
+        //remove all entries, that have routes that use the brokenLink
+        for (int i = 0; i < destinations.length; i++) {
+            String route = "";
+            try {
+                route = this.rt.get(destinations[i]).route;
+            } catch (Exception e) {
+                continue;
+            }
 
-                        //do the route discovery to find a new route
-                        System.out.println("Node " + this.getId() + ": starting new Route Discovery to " + destinations[i]);
-                        Packet rreqP = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, destinations[i], this.id, this.id);
+            if (Utils.routeContainsLink(route, brokenLink)) {
+                System.out.println("Node " + this.getId() + ": removed route to " + destinations[i] + "(" + route + ")");
+                this.rt.remove(destinations[i]);
+                VisualizationLogger.setTableUpdateAndSaveSnapshot("remove", this.id, destinations[i], route);
 
-                        this.orb.put(rreqP); //put entry in orb - wait for rres to arrive
-                        this.getNOB().addLast(rreqP);
-                    }
+                if (isOriginalSender) {
+
+                    //do the route discovery to find a new route
+                    System.out.println("Node " + this.getId() + ": starting new Route Discovery to " + destinations[i]);
+                    Packet rreqP = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, destinations[i], this.id, this.id);
+
+                    this.orb.put(rreqP); //put entry in orb - wait for rres to arrive
+                    this.getNOB().addLast(rreqP);
                 }
             }
-        }  catch (Exceptions.RoutingEntryNotFoundException e) {
-            //e.printStackTrace();
         }
-    }
 
+    }
 
 
     //getter and setter methods
@@ -144,15 +148,15 @@ public class Node {
         return x;
     }
 
-    public  void setX(int x) {
+    public void setX(int x) {
         this.x = x;
     }
 
-    public  int getY() {
+    public int getY() {
         return y;
     }
 
-    public  void setY(int y) {
+    public void setY(int y) {
         this.y = y;
     }
 
@@ -166,9 +170,9 @@ public class Node {
             Random r = new Random();
             x = r.nextInt((Config.X_SIZE + 1) - 0) + 0;
             y = r.nextInt((Config.Y_SIZE + 1) - 0) + 0;
-        } while(Config.field.hasNodeAt(x,y));
-            this.setX(x);
-            this.setY(y);
+        } while (Config.field.hasNodeAt(x, y));
+        this.setX(x);
+        this.setY(y);
         System.out.println("moved node " + this.getId() + " to X:" + x + " ,Y: " + y);
 
     }

@@ -21,7 +21,7 @@ public class Config {
     public static final int NODE_REACH = 10; // reach of nodes
     
     public static final long OUTBOUND_REQ_TIMEOUT = 10000;
-    public static final long OUTBOUND_DATA_TIMEOUT = 5000;
+    public static final long OUTBOUND_DATA_TIMEOUT = 2500;
     public static final long LOGGER_WAIT_AFTER_LAST_PACKET = 120000;
     public static final String PATH_DELIMITER = ";";
     public static final long NETWORK_BUFFER_FREQUENCY = 100;
