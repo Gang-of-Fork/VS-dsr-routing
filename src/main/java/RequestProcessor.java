@@ -105,6 +105,7 @@ public class RequestProcessor extends Thread {
                     //Routing Requests from other routers can also be used to discover own routing table
                     //but is deactivated here to simplify the simulation
                     /*
+                    #IMPROVEMENT
                     //Construct Routing Table Entry
                     this.node.addRoutingTableEntryFromPacket(this.packet);
                     */

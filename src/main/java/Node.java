@@ -134,6 +134,7 @@ public class Node {
                 VisualizationLogger.setTableUpdateAndSaveSnapshot("remove", this.id, destinations[i], route);
                 //rediscovery not needed, will be done automatically with next data packet
                 /*
+                #IMPROVEMENT
                 if (isOriginalSender) {
 
                     //do the route discovery to find a new route

@@ -15,9 +15,9 @@
  * - lifetime for rt entries
  */
 public class Config {
-    public static final int X_SIZE = 100; //size of x axis of field
-    public static final int Y_SIZE = 100; //size o y axis of field
-    public static final int NUM_OF_NODES = 150; //number of nodes
+    public static final int X_SIZE = 30; //size of x axis of field
+    public static final int Y_SIZE = 30; //size o y axis of field
+    public static final int NUM_OF_NODES = 20; //number of nodes
     public static final int NODE_REACH = 10; // reach of nodes
     
     public static final long OUTBOUND_REQ_TIMEOUT = 12500;
