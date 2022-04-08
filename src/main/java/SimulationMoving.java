@@ -27,7 +27,7 @@ public class SimulationMoving {
             n1.sendHello(n2);
 
 
-            Thread.sleep(45000);
+            Thread.sleep(30000);
             f.getNodes().get(1).move();
             n1.sendHello(n2);
 

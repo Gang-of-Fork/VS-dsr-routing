@@ -103,8 +103,12 @@ public class RequestProcessor extends Thread {
                     Packet p = PacketFactory.newRRESPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), this.packet.route);
 
                     //Routing Requests from other routers can also be used to discover own routing table
+                    //but is deactivated here to simplify the simulation
+                    /*
                     //Construct Routing Table Entry
                     this.node.addRoutingTableEntryFromPacket(this.packet);
+                    */
+
 
                     this.node.getNOB().addLast(p);
                 }
