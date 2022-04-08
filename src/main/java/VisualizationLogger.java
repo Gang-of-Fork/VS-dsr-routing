@@ -23,6 +23,7 @@ public class VisualizationLogger {
     private static String packet = "";
     private static String actions = "";
     private static String table_update = "";
+    private static String nodeMove = "";
     private static ArrayList<String> states = new ArrayList<String>();
 
 
@@ -86,6 +87,10 @@ public class VisualizationLogger {
         if (stateType.equals("RTU")) {
             state += ",\n";
             state += table_update;
+        }
+        if (stateType.equals("MOVE")) {
+            state += ",\n";
+            state += nodeMove;
         }
         states.add(state);
     }
@@ -171,6 +176,18 @@ public class VisualizationLogger {
         temp_table_update += "}\n";
         table_update = temp_table_update;
         saveSnapshot("RTU");
+    }
+
+    //must be called before move is executed
+    public synchronized static void setNodeMoveAndSaveSnapshot(Node old_Node) {
+        String temp_nodeMove = "\"move\":";
+        temp_nodeMove += "{";
+        temp_nodeMove += "\"id\":\"" + old_Node.getId() + "\",\n";
+        temp_nodeMove += "\"oldX\":" + old_Node.getX() + ",\n";
+        temp_nodeMove += "\"oldY\":" + old_Node.getY() + "\n";
+        temp_nodeMove += "}";
+        nodeMove = temp_nodeMove;
+        saveSnapshot("MOVE");
     }
 
 

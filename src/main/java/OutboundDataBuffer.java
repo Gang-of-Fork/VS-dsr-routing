@@ -68,10 +68,11 @@ public class OutboundDataBuffer extends Thread {
 
                     this.node.removeBrokenTableEntries(this.node.getId() + Config.PATH_DELIMITER + odbe.packet.getNextNodeId(), odbe.packet.source.equals(this.node.getId()));
 
-                    //retry sending the packet
-                    //this.node.sendHello(Config.field.getNodes().get(Integer.parseInt(odbe.packet.dest)));
+                    //retry part of transport layer, not network layer
+                    /*
                     this.node.sendDataPacket(Config.field.getNodes().get(Integer.parseInt(odbe.packet.dest)), odbe.packet);
                     System.out.println("Node " + this.node.getId()+  ": " + "retrying sending DataPacket to " + odbe.packet.dest);
+                    */
 
                     //only send RERR packet, if the original packet does not originate from current node, otherwise
                     //it would result in a loopback message

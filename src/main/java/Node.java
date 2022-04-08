@@ -132,7 +132,8 @@ public class Node {
                 System.out.println("Node " + this.getId() + ": removed route to " + destinations[i] + "(" + route + ")");
                 this.rt.remove(destinations[i]);
                 VisualizationLogger.setTableUpdateAndSaveSnapshot("remove", this.id, destinations[i], route);
-
+                //rediscovery not needed, will be done automatically with next data packet
+                /*
                 if (isOriginalSender) {
 
                     //do the route discovery to find a new route
@@ -142,6 +143,8 @@ public class Node {
                     this.orb.put(rreqP); //put entry in orb - wait for rres to arrive
                     this.getNOB().addLast(rreqP);
                 }
+                */
+
             }
         }
 
@@ -176,6 +179,7 @@ public class Node {
             x = r.nextInt((Config.X_SIZE + 1) - 0) + 0;
             y = r.nextInt((Config.Y_SIZE + 1) - 0) + 0;
         } while (Config.field.hasNodeAt(x, y));
+        VisualizationLogger.setNodeMoveAndSaveSnapshot(this);
         this.setX(x);
         this.setY(y);
         System.out.println("moved node " + this.getId() + " to X:" + x + " ,Y: " + y);
