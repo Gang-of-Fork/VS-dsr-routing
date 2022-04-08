@@ -15,6 +15,7 @@ public class RequestProcessor extends Thread {
 
     public static ArrayList<RequestProcessor> activeProcessors = new ArrayList();
     private static Semaphore processorsMutex = new Semaphore(1);
+    private static Semaphore RREQLogMutex = new Semaphore(1, true);
     private Node node;
     private Packet packet;
 
@@ -118,24 +119,34 @@ public class RequestProcessor extends Thread {
 
         //if node that received package is destination answer with rres packet
         //but not, if a rres packet has been sent for this rreq before
-        if (this.packet.isDestination(this.node) && !this.node.getRREQL().contains(this.packet.id)) {
-            //reverse route to get route back to sender
-            String reversedRoute = Utils.reverseRoute(newPath);
+        try {
+            RREQLogMutex.acquire();
 
-            //reverse source and destination and send discovered route to sender
-            Packet p = PacketFactory.newRRESPacket(this.packet.id, this.packet.dest, this.packet.source, this.node.getId(), reversedRoute);
+            if (this.packet.isDestination(this.node) && !this.node.getRREQL().contains(this.packet.id)) {
+                this.node.getRREQL().add(this.packet.id);
 
-            this.node.addRoutingTableEntryFromPacket(p);
-            this.node.getRREQL().add(this.packet.id);
-            this.node.getNOB().addLast(p);
-        } //only forward packet if current node has not forwarded in the past
-        else if (!this.packet.route.contains(this.node.getId()) && !this.node.getRREQL().contains(this.packet.id)) {
-            //just forward the packet as it as and put packet in orb to wait for ack
-            Packet p = PacketFactory.newRREQPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), newPath);
-            this.node.getORB().put(p);
-            this.node.getRREQL().add(this.packet.id);
+                //reverse route to get route back to sender
+                String reversedRoute = Utils.reverseRoute(newPath);
 
-            this.node.getNOB().addLast(p);
+                //reverse source and destination and send discovered route to sender
+                Packet p = PacketFactory.newRRESPacket(this.packet.id, this.packet.dest, this.packet.source, this.node.getId(), reversedRoute);
+
+                this.node.addRoutingTableEntryFromPacket(p);
+                this.node.getNOB().addLast(p);
+            } //only forward packet if current node has not forwarded in the past
+            else if (!this.packet.route.contains(this.node.getId()) && !this.node.getRREQL().contains(this.packet.id)) {
+                this.node.getRREQL().add(this.packet.id);
+
+                //just forward the packet as it as and put packet in orb to wait for ack
+                Packet p = PacketFactory.newRREQPacket(this.packet.id, this.packet.source, this.packet.dest, this.node.getId(), newPath);
+                this.node.getORB().put(p);
+
+
+                this.node.getNOB().addLast(p);
+            }
+            RREQLogMutex.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

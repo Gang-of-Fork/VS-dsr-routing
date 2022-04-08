@@ -15,11 +15,11 @@ import java.util.UUID;
 public class SendBuffer extends Thread {
 
     class SendBufferEntry {
-        public String dest;
+        public Packet dataP;
         public long ttl;
 
-        public SendBufferEntry(String dest, long ttl) {
-            this.dest = dest;
+        public SendBufferEntry(Packet dataP, long ttl) {
+            this.dataP = dataP;
             this.ttl = ttl;
         }
     }
@@ -32,11 +32,11 @@ public class SendBuffer extends Thread {
         this.node = n;
     }
 
-    public synchronized void put(String dest) {
+    public synchronized void put(Packet dataP) {
         try {
             long expiry = System.currentTimeMillis() + Config.OUTBOUND_REQ_TIMEOUT;
 
-            SendBufferEntry sbe = new SendBufferEntry(dest, expiry);
+            SendBufferEntry sbe = new SendBufferEntry(dataP, expiry);
 
             this.entries.add(sbe);
         } finally {
@@ -52,7 +52,7 @@ public class SendBuffer extends Thread {
                 long now = System.currentTimeMillis();
 
                 if (now > sbe.ttl) {
-                    System.out.println("Node " + this.node.getId() + ": " + sbe.dest + " expired");
+                    System.out.println("Node " + this.node.getId() + ": " + sbe.dataP.id + " expired");
                     this.entries.remove(i);
                 }
             }
@@ -67,17 +67,17 @@ public class SendBuffer extends Thread {
 
             //check if sendBuffer contains any entries for the newly discovered route
             for (int i = 0; i < this.entries.size(); i++) {
-                String dest = this.entries.get(i).dest;
+                String dest = this.entries.get(i).dataP.dest;
 
                 if (dest.equals(rte.dest)) {
+                    Packet dataP = this.entries.get(i).dataP;
+                    dataP.route = rte.route;
                     this.entries.remove(i);
 
-                    Packet dataPacket = PacketFactory.newDataPacket(UUID.randomUUID().toString(), this.node.getId(), dest, this.node.getId(), rte.route);
+                    System.out.println("Node "+ this.node.getId() + ": Sending data to " + dataP.dest + " Via " + dataP.route);
 
-                    System.out.println("Node "+ this.node.getId() + ": Sending data to " + dataPacket.dest + " Via " + dataPacket.route);
-
-                    this.node.getODB().put(dataPacket);
-                    this.node.getNOB().addLast(dataPacket);
+                    this.node.getODB().put(dataP);
+                    this.node.getNOB().addLast(dataP);
                 }
             }
         } finally {

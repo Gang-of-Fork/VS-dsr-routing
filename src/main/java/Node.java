@@ -47,14 +47,19 @@ public class Node {
     }
 
     public void sendHello(Node dest) {
-        ;
+        Packet dataP = PacketFactory.newDataPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, "");
+        this.sendDataPacket(dest, dataP);
+    }
+
+    public void sendDataPacket(Node dest, Packet dataP) {
+
         //check routing table if route was already discovered
         if (this.rt.exists(dest.getId())) {
             try {
                 RoutingTable.RoutingTableEntry rte = this.rt.get(dest.getId());
 
-                //route was found send data packet
-                Packet dataP = PacketFactory.newDataPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, rte.route);
+                //route was found, set route and set packet
+                dataP.route = rte.route;
 
                 System.out.println("I " + this.id + " will use my cached route for this " + rte.route);
 
@@ -69,7 +74,7 @@ public class Node {
             Packet rreqP = PacketFactory.newRREQPacket(UUID.randomUUID().toString(), this.id, dest.getId(), this.id, this.id);
 
             this.orb.put(rreqP); //put entry in orb - wait for rres to arrive
-            this.sb.put(rreqP.dest); //also put entry in sb - wait for route discovery to finish
+            this.sb.put(dataP); //also put entry in sb - wait for route discovery to finish before sending data
             this.getNOB().addLast(rreqP);
         }
     }

@@ -21,7 +21,7 @@ public class RoutingRequestLog {
         this.entries.add(entry);
     }
     
-    public Boolean contains(String entry) {
+    public synchronized Boolean contains(String entry) {
         return this.entries.contains(entry);
     }
 }

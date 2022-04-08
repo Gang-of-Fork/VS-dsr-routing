@@ -124,9 +124,17 @@ public class VisualizationLogger {
                 } catch (Exceptions.IncompatiblePacketTypeException e) {
                     e.printStackTrace();
                 }
+            }// RREQs are only processed if the Node hasn't received this id yet
+        } /*
+        else if(p.type.equals(Packet.PacketTypes.RREQ)) {
+            for (Node node : neighbourNodes) {
+                if(node.getRREQL().contains(p.id)) {
+                    receiving_discarding_Ids.add(node.getId());
+                } else {
+                    receiving_processing_Ids.add(node.getId());
+                }
             }
-            // RREQ, RRES, RERR are overheard by all other nodes
-        } else {
+        } */ else {
             for (Node node : neighbourNodes) {
                 receiving_processing_Ids.add(node.getId());
             }
