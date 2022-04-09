@@ -75,6 +75,7 @@ public class Node {
 
             this.orb.put(rreqP); //put entry in orb - wait for rres to arrive
             this.sb.put(dataP); //also put entry in sb - wait for route discovery to finish before sending data
+            this.getRREQL().add(rreqP.id);
             this.getNOB().addLast(rreqP);
         }
     }
@@ -180,9 +181,11 @@ public class Node {
             x = r.nextInt((Config.X_SIZE + 1) - 0) + 0;
             y = r.nextInt((Config.Y_SIZE + 1) - 0) + 0;
         } while (Config.field.hasNodeAt(x, y));
-        VisualizationLogger.setNodeMoveAndSaveSnapshot(this);
+        int oldX = this.getX();
+        int oldY = this.getY();
         this.setX(x);
         this.setY(y);
+        VisualizationLogger.setNodeMoveAndSaveSnapshot(this.getId(), oldX, oldY);
         System.out.println("moved node " + this.getId() + " to X:" + x + " ,Y: " + y);
 
     }

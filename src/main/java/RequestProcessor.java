@@ -5,6 +5,7 @@
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
 
@@ -139,7 +140,7 @@ public class RequestProcessor extends Thread {
                 this.node.addRoutingTableEntryFromPacket(p);
                 this.node.getNOB().addLast(p);
             } //only forward packet if current node has not forwarded in the past
-            else if (!this.packet.route.contains(this.node.getId()) && !this.node.getRREQL().contains(this.packet.id)) {
+            else if (!Arrays.asList(this.packet.route.split(";")).contains(this.node.getId()) && !this.node.getRREQL().contains(this.packet.id)) {
                 this.node.getRREQL().add(this.packet.id);
 
                 //just forward the packet as it as and put packet in orb to wait for ack
@@ -149,9 +150,10 @@ public class RequestProcessor extends Thread {
 
                 this.node.getNOB().addLast(p);
             }
-            RREQLogMutex.release();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            RREQLogMutex.release();
         }
     }
 

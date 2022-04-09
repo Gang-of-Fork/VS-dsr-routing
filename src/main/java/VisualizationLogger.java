@@ -130,7 +130,7 @@ public class VisualizationLogger {
                     e.printStackTrace();
                 }
             }// RREQs are only processed if the Node hasn't received this id yet
-        } /*
+        }
         else if(p.type.equals(Packet.PacketTypes.RREQ)) {
             for (Node node : neighbourNodes) {
                 if(node.getRREQL().contains(p.id)) {
@@ -139,7 +139,7 @@ public class VisualizationLogger {
                     receiving_processing_Ids.add(node.getId());
                 }
             }
-        } */ else {
+        }  else {
             for (Node node : neighbourNodes) {
                 receiving_processing_Ids.add(node.getId());
             }
@@ -179,12 +179,12 @@ public class VisualizationLogger {
     }
 
     //must be called before move is executed
-    public synchronized static void setNodeMoveAndSaveSnapshot(Node old_Node) {
+    public synchronized static void setNodeMoveAndSaveSnapshot(String nodeId, int oldX, int oldY) {
         String temp_nodeMove = "\"move\":";
         temp_nodeMove += "{";
-        temp_nodeMove += "\"id\":\"" + old_Node.getId() + "\",\n";
-        temp_nodeMove += "\"oldX\":" + old_Node.getX() + ",\n";
-        temp_nodeMove += "\"oldY\":" + old_Node.getY() + "\n";
+        temp_nodeMove += "\"id\":\"" + nodeId + "\",\n";
+        temp_nodeMove += "\"oldX\":" + oldX + ",\n";
+        temp_nodeMove += "\"oldY\":" + oldY + "\n";
         temp_nodeMove += "}";
         nodeMove = temp_nodeMove;
         saveSnapshot("MOVE");
